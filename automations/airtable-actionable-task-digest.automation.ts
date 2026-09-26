@@ -48,8 +48,18 @@ export default automation(
 
     slack.sendMessage({
       conversation: parameters.slackChannelId,
-      text: t`${digest.count} tasks can move today. Showing the first 40:\n${digest.lines.transform((lines) => lines.join("\n"))}`,
+      text: t`${digest.count} tasks can move today. Showing the first 40:\n${digest.lines.transform((lines) => lines.join("\n"))}`.transform(
+        escapeSlackText,
+      ),
       unfurlLinks: false,
     })
   },
 )
+
+/** Keeps provider text from becoming Slack mentions or control markup. */
+function escapeSlackText(text: string) {
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+}
